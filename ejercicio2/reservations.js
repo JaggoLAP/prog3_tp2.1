@@ -1,6 +1,39 @@
-class Customer {}
+class Customer {
+    constructor(id,name,email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
 
-class Reservation {}
+    get info() {
+        return `${this.name} - ${this.email}`
+    }
+}
+
+class Reservation {
+    constructor(id,customer,date,guests) {
+        this.id = id;
+        this.customer = customer;
+        this.date = new Date(date);
+        this.guests = guests;
+    }
+
+    get info() {
+        return `Fecha y Hora: ${this.date.toLocaleString()}, Cliente: ${this.customer.info}, Número de Comensales: ${this.guests}`;
+    }
+
+    static validateReservation(datosReserva) {
+        const fechaActual = new Date();
+        console.log(`Fecha actual: ${fechaActual}`);
+        console.log(`Fecha de reserva: ${datosReserva.date}`);
+        const fechaReserva = new Date(datosReserva.date);
+        if (datosReserva < fechaActual || datosReserva.guests <= 0) {
+            return false;
+        }
+        return true;
+
+    }
+}
 
 class Restaurant {
     constructor(name) {
@@ -41,7 +74,7 @@ document
     .getElementById("reservation-form")
     .addEventListener("submit", function (event) {
         event.preventDefault();
-
+        console.log("hola");
         const customerName = document.getElementById("customer-name").value;
         const customerEmail = document.getElementById("customer-email").value;
         const reservationDate =
@@ -63,7 +96,8 @@ document
                 reservationDate,
                 guests
             );
-
+            console.log("Cliente:", customer.info);
+            console.log("reserva:", reservation.info);
             restaurant.addReservation(reservation);
             restaurant.render();
         } else {
@@ -76,8 +110,9 @@ const restaurant = new Restaurant("El Lojal Kolinar");
 
 const customer1 = new Customer(1, "Shallan Davar", "shallan@gmail.com");
 const reservation1 = new Reservation(1, customer1, "2024-12-31T20:00:00", 4);
+console.log(`datos de la reserva: ${reservation1.info}`)
 
-if (Reservation.validateReservation(reservation1.date, reservation1.guests)) {
+if (Reservation.validateReservation(reservation1)) {
     restaurant.addReservation(reservation1);
     restaurant.render();
 } else {
